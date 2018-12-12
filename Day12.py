@@ -31,7 +31,7 @@ def Rules(strSplit):
 # Seeding generation 0
 
 MyPlants = []
-stopGen = 21
+stopGen = 20
 MyPlants.append('................................................' + initialState + '....................................................................................')
 
 def NextGen(curGen):
@@ -49,13 +49,110 @@ for i in range(stopGen):
     MyPlants.append(NextGen(MyPlants[i]))
 
 total = 0
-for plant in MyPlants:
-    print plant
-    total = total + plant.count('#')
-print total
+
+potNum = range(-48,183)
+sum = 0
+plant = MyPlants[20] 
+
+for idx in range(len(plant)):
+    if plant[idx] == '#':
+        sum = sum + potNum[idx]
+
+print sum
+
+
+
+
+
+############
+# Part 2
+############
+MyPlants = []
+stopGen =50000000000 
+
+padding = '.'*5000
+MyPlants.append(padding + initialState + padding)
+MyPlants.append(padding + initialState + padding)
+
+potNum = range(-5000,5000+len(initialState))
+
+# Just going to watch this and look for a pattern
+nGen = 0
+while True:
+    nGen += 1
+    MyPlants[0] = MyPlants[1]
+    MyPlants[1] = NextGen(MyPlants[0])
+    prevSum = sum
+    sum = 0
+    for jdx in range(len(MyPlants[1])):
+        if MyPlants[1][jdx] == '#':
+            sum += potNum[jdx]
+    print nGen, sum, sum-prevSum
+#print nGen, sum
+
+
+# A ha! every generation after 300 adds 138
+# value at gen 100 = 56823 
+print ((50000000000-300)*186)+56823.
+
+"""
+nGen = 0
+while nGen < stopGen:
+    nGen += 1
+    MyPlants[0] = MyPlants[1]
+    MyPlants[1] = NextGen(MyPlants[0])
+    sum = 0
+    for jdx in range(len(MyPlants[1])):
+        if MyPlants[1][jdx] == '#':
+            sum += potNum[jdx]
+    #print nGen, sum
+print nGen, sum
+"""
+
+
+"""while nGen < stopGen:
+    # Swap Generations
+    MyPlants[0] = MyPlants[1]
+    MyPlants[1] = NextGen(MyPlants[0])
+    nGen += 1
+plant = MyPlants[1]
+for idx in range(len(plant)):
+    if plant[idx] == '#':
+        sum = sum + potNum[idx]
+"""
+"""
+for i in range(stopGen):
+    MyPlants.append(NextGen(MyPlants[i]))
+total = 0
+plant = MyPlants(stopGen)
+for idx in range(len(plant)):
+    if plant[idx] == '#':
+        sum = sum + potNum[idx]
+
+print sum
+
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 """"
+oo
 for GenIdx in range(stopGen):
     curGen = MyPlants[GenIdx]
     newStr = ''
