@@ -19,7 +19,7 @@ def ParseRules(line):
 def Rules(strSplit):
     #The plant in question is always idx = 2 (3rd plant from left)
     rules = []
-    for line in rawData[3:]:
+    for line in rawData[2:]:
         rules.append(ParseRules(line))
     for rule in rules:
         if strSplit == rule[0]:
