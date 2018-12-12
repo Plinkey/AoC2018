@@ -1,11 +1,11 @@
 """ Advent of Code 2018 Day 12"""
 
-with open('Inputs\Day12TEST.input','r') as f:
-    rawData = f.read().splitlines()
-
-
-#with open('Inputs\Day12.input','r') as f:
+#with open('Inputs\Day12TEST.input','r') as f:
     #rawData = f.read().splitlines()
+
+
+with open('Inputs\Day12.input','r') as f:
+    rawData = f.read().splitlines()
 
 ## Initial State
 initialState = rawData[0].split(':')[1].lstrip(' ')
@@ -31,10 +31,31 @@ def Rules(strSplit):
 # Seeding generation 0
 
 MyPlants = []
-stopGen = 2
-MyPlants.append('..........' + initialState + '..........')
-MyPlants.append('..........' + initialState + '..........')
+stopGen = 21
+MyPlants.append('................................................' + initialState + '....................................................................................')
 
+def NextGen(curGen):
+    newStr = ''
+    for idx in range(len(curGen)):
+        if idx - 2 > 0 and idx+3 < len(curGen):
+            string = curGen[idx-2:idx+3]
+            newChar = Rules(string)
+            newStr = newStr + newChar
+        else:
+            newStr = newStr + '.'
+    return newStr
+
+for i in range(stopGen):
+    MyPlants.append(NextGen(MyPlants[i]))
+
+total = 0
+for plant in MyPlants:
+    print plant
+    total = total + plant.count('#')
+print total
+
+
+""""
 for GenIdx in range(stopGen):
     curGen = MyPlants[GenIdx]
     newStr = ''
@@ -47,6 +68,7 @@ for GenIdx in range(stopGen):
             newStr = newStr + '.'
     print newStr
     MyPlants.append(newStr)
+    """
 
 
 
