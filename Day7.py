@@ -55,3 +55,7 @@ while max(num.values()) >= 0:
 print len(WorkDone)
 print Queue
 print WorkDone
+
+###########
+# PART II 
+###########
