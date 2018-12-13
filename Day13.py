@@ -1,11 +1,12 @@
 """ Advent of Code Day 13"""
 import numpy as np
+import copy
 
-with open('Inputs\Day13TEST.input','r') as f:
-    rawData = f.read().splitlines()
-
-#with open('Inputs\Day12.input','r') as f:
+#with open('Inputs\Day13TEST.input','r') as f:
     #rawData = f.read().splitlines()
+
+with open('Inputs\Day13.input','r') as f:
+    rawData = f.read().splitlines()
 
 #
 #
@@ -23,15 +24,30 @@ with open('Inputs\Day13TEST.input','r') as f:
 #  Helper Functions/Classes
 ############
 
-def PrintMap(MyMap):
-    for i in MyMap:
+def PrintMap(Map, carts):
+    tempMap = copy.deepcopy(Map)
+    if carts:
+        for i in carts:
+            y,x,char = i.PlotCart()
+            #print y, x, char
+            tempMap[y][x] = char
+    for i in tempMap:
         print ''.join(i)
 
+
+def CheckCollision(cart1, cart2):
+    if cart1.curX == cart2.curX and cart1.curY == cart2.curY:
+        return True
+    else:
+        return False
+
 class Cart:
-    def __init__(self,char, initX, initY):
+    def __init__(self, initY, initX, char):
+    #def __init__(self,char, initX, initY):
         # Position
         self.curX = initX
         self.curY = initY
+        #print "Made a cart at", self.curY, self.curX
         # Pointing
         if char == '<': # pointing left
             self.curPoint = 'Left'
@@ -46,14 +62,22 @@ class Cart:
         self.turns = ['Left','Straight','Right']
 
     def MoveCart(self):
-        if curPoint == 'Left':
+        # Move
+        if self.curPoint == 'Left':
             self.curX -= 1
-        elif curPoint == 'Right':
+        elif self.curPoint == 'Right':
             self.curX += 1
-        elif curPoint == 'Up':
+        elif self.curPoint == 'Up':
             self.curY -= 1
-        elif curPoint == 'Down':
+        elif self.curPoint == 'Down':
             self.curY += 1
+        # Check for Intersection
+        if CartMap[self.curY][self.curX] == '+':
+            self.EncounterIntersection()
+        # Check for Track Turn
+        elif CartMap[self.curY][self.curX] in ['/','\\']:
+            self.EncounterTurn()
+
     
     def WhichWay(self):
         # When encountering an intersection, returns which way the cart should go
@@ -64,33 +88,66 @@ class Cart:
     def EncounterIntersection(self):
         # When cart lands on intersection, it'll first turn left, then straight, then right
         # This all happens instantly, the next turn it will move the next spot in that dir
-        TurnCart(WhichWay())
+        #self.TurnCart(self.WhichWay())
+        ans = self.WhichWay()
+        #print "Turning = ", ans
+        self.TurnCart(ans)
 
     def EncounterTurn(self):
         # When cart lands on turn in the track, turn the cart in that direction 
-        trackPiece = MyMap[curY][curX]
+        trackPiece = CartMap[self.curY][self.curX]
         if trackPiece == '/': # left turn or right turn, depending on direction
             if self.curPoint == 'Left': # then you're turning Left
-                TurnCart('Left')
+                self.TurnCart('Left')
             elif self.curPoint == 'Up': # then you're turning RIGHT
-                TurnCart('Right')
-            elif self.curPoint == 'Right' # then you're turning LEFT
-                TurnCart('Left')
-            elif self.curPoint == 'Down' # then you're turning RIGHT
-                Turn Cart('Right')
+                self.TurnCart('Right')
+            elif self.curPoint == 'Right': # then you're turning LEFT
+                self.TurnCart('Left')
+            elif self.curPoint == 'Down': # then you're turning RIGHT
+                self.TurnCart('Right')
         elif trackPiece == '\\':
             if self.curPoint == 'Left': # then you're turning Left
-                TurnCart('Right')
+                self.TurnCart('Right')
             elif self.curPoint == 'Up': # then you're turning RIGHT
-                TurnCart('Left')
-            elif self.curPoint == 'Right' # then you're turning LEFT
-                TurnCart('Right')
-            elif self.curPoint == 'Down' # then you're turning RIGHT
-                Turn Cart('Left')
+                self.TurnCart('Left')
+            elif self.curPoint == 'Right': # then you're turning LEFT
+                self.TurnCart('Right')
+            elif self.curPoint == 'Down': # then you're turning RIGHT
+                self.TurnCart('Left')
+
+    def TurnCart(self, turn):
+        turns = ['Left','Down','Right','Up']
+        #leftTurns = ['Left','Down','Right','Up']
+        #rightTurns = ['Left','Up','Right','Down']
+        if turn == 'Straight':
+            self.curPoint = self.curPoint
+        elif turn == 'Right': # ROT through turns back one pos 
+            idx = turns.index(self.curPoint)
+            if idx >= 1: # don't worry about wraparound
+                self.curPoint =  turns[idx-1]
+            else: # wraparound
+                self.curPoint = turns[-1]
+        elif turn == 'Left': # ROT through turns fwd oen pos
+            idx = turns.index(self.curPoint)
+            if idx < len(turns)-1: # don't worry about wrap
+                self.curPoint = turns[idx+1]
+            else: # wrap
+                self.curPoint =  turns[0]
+
+    def PlotCart(self):
+        if self.curPoint == 'Left':
+            pointChar = '<'
+        if self.curPoint == 'Right':
+            pointChar = '>'
+        if self.curPoint == 'Up':
+            pointChar = '^'
+        if self.curPoint == 'Down':
+            pointChar = 'v'
+        return self.curY, self.curX, pointChar
 
 
-    def TurnCart(self, direction):
-        pointing
+
+
 
 
 
@@ -104,12 +161,15 @@ class Cart:
 mapSizeY = len(rawData)
 mapSizeX = len(rawData[0])
 
+
 # Seed empty CartMap of correct size.  Spaces represent nothing
 # Will fill in map with cart lines in separate process
 CartMap = np.full([mapSizeY, mapSizeX], ' ',dtype=str)
 
+listCarts = []
 
-
+collisionFlag = False
+tick = 0
 
 ############
 #  Read Map, Create Cart
@@ -122,11 +182,33 @@ for ydx, line in enumerate(rawData): # for each line in rawData
             CartMap[ydx][xdx] = char
         elif char in ['<','>']: # replace with horizontal track
             CartMap[ydx][xdx] = '-'
-            # TODO: Cart Found, create cart
+            #print "Found a cart at", ydx, xdx
+            listCarts.append(Cart(ydx, xdx, char))
         elif char in ['^','v']: # replace with vertical track
             CartMap[ydx][xdx] = '|'
-            # TODO: Cart Found, create cart
+            #print "Found a cart at", ydx, xdx
+            listCarts.append(Cart(ydx, xdx, char))
         else:
             print "Shit. Something Broke when reading MAP."
 
-PrintMap(CartMap)
+#PrintMap(CartMap,[])
+#print listCarts
+#PrintMap(CartMap, listCarts)
+
+while not collisionFlag:
+    tick += 1
+    print tick
+    for cart in listCarts:
+        cart.MoveCart()
+    #print "Tick = ", tick
+    #PrintMap(CartMap,listCarts)
+    for i, cart1 in enumerate(listCarts):
+        for j, cart2 in enumerate(listCarts):
+            if i == j:
+                continue
+            else:
+                collisionFlag = CheckCollision(cart1, cart2)
+
+for idx, cart in enumerate(listCarts):
+    print "Cart", idx
+    print cart.curX, cart.curY
