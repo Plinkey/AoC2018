@@ -1,4 +1,6 @@
+
 """ Advent Of Code """
+import numpy as np
 
 
 
@@ -86,7 +88,20 @@ def FindSequence(array, sequence):
     except ValueError:
         return -1
 
-recipeArray = [3,7]
+def NextGenRecipe2(array, idx1, idx2):
+    strSum = str(array[idx1] + array[idx2])
+    for i in strSum:
+        array[np.where(array==-1)[0][0]] = int(i)
+        #array.append(int(i))
+    return array, len(strSum)
+
+
+
+#recipeArray = [3,7]
+recipeArray = np.zeros(1000000)
+recipeArray.fill(-1) # using -1 as flag
+recipeArray[0] = 3
+recipeArray[1] = 7
 
 elf1 = 0
 elf2 = 1
@@ -102,8 +117,30 @@ elf2 = 1
 sequence = '702830'
 
 foundFlag = -1
+
+
+
+ """
+ #  uncomment for part 1
+while nRecipes <= goalRecipe + 10:
+    recipeArray, newRecipes = NextGenRecipe2(recipeArray, elf1, elf2)
+    nRecipes += newRecipes
+    elf1 = Rotate(recipeArray, elf1)
+    elf2 = Rotate(recipeArray, elf2)
+    if nRecipes%1000 == 0:
+        print "Total Num of Recipes so far = ", nRecipes
+
+#print recipeArray
+print "len recipeArray = ", len(recipeArray)
+answer = ''
+for i in recipeArray[goalRecipe:goalRecipe+10]:
+    answer += str(i)
+
+print recipeArray[-11:]
+print "The Answer IS =", answer
+"""
 while foundFlag == -1:
-    recipeArray, newRecipes = NextGenRecipe(recipeArray, elf1, elf2)
+    recipeArray, newRecipes = NextGenRecipe2(recipeArray, elf1, elf2)
     nRecipes += newRecipes
     foundFlag = FindSequence(recipeArray, sequence)
     elf1 = Rotate(recipeArray, elf1)
@@ -112,4 +149,4 @@ while foundFlag == -1:
         print "Total Num of Recipes so far = ", nRecipes
 #print recipeArray
 print foundFlag
-
+"""
