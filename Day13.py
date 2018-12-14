@@ -2,7 +2,20 @@
 import numpy as np
 import copy
 
+# Below should colide at (7,3)
 #with open('Inputs\Day13TEST.input','r') as f:
+    #rawData = f.read().splitlines()
+
+# Below should colide at (0,2)
+#with open('inputs\day13test1.input','r') as f:
+    #rawData = f.read().splitlines()
+
+# Below should colide at (2,0)
+#with open('inputs\day13test2.input','r') as f:
+    #rawData = f.read().splitlines()
+
+# Below should colide at (1,0)
+#with open('inputs\day13test3.input','r') as f:
     #rawData = f.read().splitlines()
 
 with open('Inputs\Day13.input','r') as f:
@@ -41,6 +54,55 @@ def CheckCollision(cart1, cart2):
     else:
         return False
 
+def FindNextCartToMove(Carts):
+    #print "runningFindNExtCartToMove"
+    global tick
+    curMinX = mapSizeX
+    curMinY = mapSizeY
+    idxOfCart = -1
+    for num, cart in enumerate(Carts):
+        if cart.curY <= curMinY:
+            if cart.curX <= curMinX:
+                if cart.lastMoved <= tick:
+                    #print "idxOfCart = ", num
+                    #print "curMinX = ", cart.curX
+                    #print "curMinY =", cart.curY
+                    idxOfCart = num
+                    curMinX = cart.curX
+                    curMinY = cart.curY
+    if idxOfCart != -1:
+        #print "CART FOUND to move", idxOfCart, curMinX, curMinY
+        #print listCarts[idxOfCart].lastMoved 
+        #print "new updated lastmoved = ", listCarts[idxOfCart].lastMoved
+        return idxOfCart
+    else:
+        #print "ALL CARTS DONE THIS TICK!"
+        tick += 1
+        return False
+
+def MoveNextCart():
+    nextCart = FindNextCartToMove(listCarts)
+    listCarts[nextCart].lastMoved += 1
+    listCarts[nextCart].MoveCart()
+
+def CheckAllCollision():
+    collisionFlag = False
+    rcart1 = -1 # flag meaning no cart found
+    rcart2 = -1
+    for i, cart1 in enumerate(listCarts):
+        for j, cart2 in enumerate(listCarts):
+            if i == j:
+                continue
+            else:
+                collisionFlag = CheckCollision(cart1, cart2)
+                rcart1 = cart1
+                rcart2 = cart2
+    return collisionFlag, rcart1, rcart2
+
+def PrintCollision(cart1, cart2):
+    print cart1.curX, cart1.curY
+    print cart2.curX, cart2.curY
+
 class Cart:
     def __init__(self, initY, initX, char):
     #def __init__(self,char, initX, initY):
@@ -60,6 +122,7 @@ class Cart:
         else:
             print "Shit. Something broke when determining initial pointing"
         self.turns = ['Left','Straight','Right']
+        self.lastMoved = 0
 
     def MoveCart(self):
         # Move
@@ -195,13 +258,41 @@ for ydx, line in enumerate(rawData): # for each line in rawData
 #print listCarts
 #PrintMap(CartMap, listCarts)
 
+
+while not collisionFlag:
+    MoveNextCart()
+    #PrintMap(CartMap, listCarts)
+    collisionFlag, cart1, cart2 = CheckAllCollision()
+    if collisionFlag:
+        print "Found a collision!"
+        PrintCollision(cart1, cart2)
+        PrintMap(CartMap,listCarts)
+        break
+
+
+
+
+
+"""
 while not collisionFlag:
     tick += 1
     print tick
-    for cart in listCarts:
-        cart.MoveCart()
+    #for cart in listCarts:
+        #cart.MoveCart()
+    # Find cart to move
+    tickDone = False
+    while not tickDone:
+        next = FindNextCartToMove(listCarts, tick)
+        if next:
+            listCarts[next].MoveCart()
+        else:
+            tickDone = True
+
+
     #print "Tick = ", tick
-    #PrintMap(CartMap,listCarts)
+    PrintMap(CartMap,listCarts)
+
+
     for i, cart1 in enumerate(listCarts):
         for j, cart2 in enumerate(listCarts):
             if i == j:
@@ -212,3 +303,4 @@ while not collisionFlag:
 for idx, cart in enumerate(listCarts):
     print "Cart", idx
     print cart.curX, cart.curY
+"""
