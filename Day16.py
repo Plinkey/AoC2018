@@ -122,7 +122,7 @@ def ParsePartOne(lines_in):
         op[i] = int(val)
 
     # After
-    after = lines_in[2].split(': ')[1]
+    after = lines_in[2].split(':  ')[1]
     after = after.lstrip('[').rstrip(']').split(', ')
     for i, val in enumerate(after):
         after[i] = int(val)
@@ -199,9 +199,30 @@ def CountTruth():
     return len(np.where(truth==True)[0])
 
 
+with open('Inputs\Day16a.input', 'r') as f:
+    rawData = f.read().splitlines()
 
 
 
+"""
+line1 = rawData[4]
+line2 = rawData[4+1]
+line3 = rawData[4+2]
+lines = [line1, line2, line3]
+print lines
 
+#ParsePartOne(lines)
+truth = CheckWhatsTrue(lines)
+print truth
+"""
 
-# np.where(bla == True)[0]
+counter = 0
+while counter < len(rawData)-3:
+    line1 = rawData[counter]
+    line2 = rawData[counter+1]
+    line3 = rawData[counter+2]
+    lines = [line1, line2, line3]
+    #print lines
+    truth = CheckWhatsTrue(lines)
+    print CountTruth()
+    counter += 4
