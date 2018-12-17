@@ -139,12 +139,12 @@ def Compare(a,b):
     for idx, value in enumerate(a):
         if b[idx] != value:
             return False
-        else:
-            return True
-
+            break
+    return True
 
 def CheckWhatsTrue(lines_in):
-    truth = np.zeros(14, 'bool')
+    global stack
+    truth = np.zeros(14, 'int')
     # list of all 
     """ indices:
         0 = ADDR
@@ -166,43 +166,50 @@ def CheckWhatsTrue(lines_in):
     nOP = operation[0]
     #if stackPost == ADDR(operation[1], operation[2], operation[3]):
     if Compare(stackPost,ADDR(operation[1], operation[2], operation[3])):
-        truth[0] == True
+        truth[0] = 1
     if Compare(stackPost, ADDI(operation[1], operation[2], operation[3])):
-        truth[1] == True
+        truth[1] = 1
     if Compare(stackPost, MULR(operation[1], operation[2], operation[3])):
-        truth[2] == True
+        truth[2] = 1
     if Compare(stackPost, MULI(operation[1], operation[2], operation[3])):
-        truth[3] == True
+        truth[3] = 1
     if Compare(stackPost, BORR(operation[1], operation[2], operation[3])):
-        truth[4] == True
+        truth[4] = 1
     if Compare(stackPost, BORI(operation[1], operation[2], operation[3])):
-        truth[5] == True
+        truth[5] = 1
     if Compare(stackPost, SETR(operation[1], operation[2], operation[3])):
-        truth[6] == True
+        truth[6] = 1
     if Compare(stackPost, SETI(operation[1], operation[2], operation[3])):
-        truth[7] == True
+        truth[7] = 1
     if Compare(stackPost, GTIR(operation[1], operation[2], operation[3])):
-        truth[8] == True
+        truth[8] = 1
     if Compare(stackPost, GTRI(operation[1], operation[2], operation[3])):
-        truth[9] == True
+        truth[9] = 1
     if Compare(stackPost, GTRR(operation[1], operation[2], operation[3])):
-        truth[10] == True
+        truth[10] = 1
     if Compare(stackPost, EQIR(operation[1], operation[2], operation[3])):
-        truth[11] == True
+        truth[11] = 1
     if Compare(stackPost, EQRI(operation[1], operation[2], operation[3])):
-        truth[12] == True
+        truth[12] = 1
     if Compare(stackPost, EQRR(operation[1], operation[2], operation[3])):
-        truth[13] == True
+        truth[13] = 1
+    print truth
     return truth
 
-def CountTruth():
-    return len(np.where(truth==True)[0])
+def CountTruth(truth):
+    return len(np.where(truth==1)[0])
 
 
 with open('Inputs\Day16a.input', 'r') as f:
     rawData = f.read().splitlines()
 
-
+"""
+line1 = 'Before: [3, 2, 1, 1]'
+line2 = '9 2 1 2'
+line3 = 'After:  [3, 2, 2, 1]'
+lines = [line1, line2, line3]
+CheckWhatsTrue(lines)
+"""
 
 """
 line1 = rawData[4]
@@ -217,12 +224,19 @@ print truth
 """
 
 counter = 0
+count = 0
 while counter < len(rawData)-3:
     line1 = rawData[counter]
+    #print line1
     line2 = rawData[counter+1]
+    #print line2
     line3 = rawData[counter+2]
+    #print line3
     lines = [line1, line2, line3]
     #print lines
     truth = CheckWhatsTrue(lines)
-    print CountTruth()
+    print CountTruth(truth)
+    count += CountTruth(truth)
     counter += 4
+
+print "THE ANSER IS: ", count
