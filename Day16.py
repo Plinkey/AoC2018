@@ -5,7 +5,6 @@ import numpy as np
 # Functions
 #################
 
-stack = np.zeros(4, 'int')
 
 # Addition
 def ADDR(a,b,c):
@@ -83,7 +82,7 @@ def GTRR(a,b,c):
 def EQIR(a,b,c):
     out = stack.copy()
     if a == stack[b]:
-        out[c] = 0
+        out[c] = 1
     else:
         out[c] = 0
     return out
@@ -103,6 +102,18 @@ def EQRR(a,b,c):
     else:
         out[c] = 0
     return out
+
+def BANR(a,b,c):
+    out = stack.copy()
+    out[c] = stack[a] & stack[b]
+    return out
+
+def BANI(a,b,c):
+    out = stack.copy()
+    out[c] = stack[a] & b
+    return out
+
+    
 
 
 ###################
@@ -144,7 +155,7 @@ def Compare(a,b):
 
 def CheckWhatsTrue(lines_in):
     global stack
-    truth = np.zeros(14, 'int')
+    truth = np.zeros(16, 'int')
     # list of all 
     """ indices:
         0 = ADDR
@@ -161,6 +172,8 @@ def CheckWhatsTrue(lines_in):
         11 = EQIR
         12 = EQRI
         13 = EQRR
+        14 = BANR
+        15 = BANI
     """
     stack, operation, stackPost = ParsePartOne(lines_in)
     nOP = operation[0]
@@ -193,6 +206,12 @@ def CheckWhatsTrue(lines_in):
         truth[12] = 1
     if Compare(stackPost, EQRR(operation[1], operation[2], operation[3])):
         truth[13] = 1
+    if Compare(stackPost, BANR(operation[1], operation[2], operation[3])):
+        truth[14] = 1
+    if Compare(stackPost, BANI(operation[1], operation[2], operation[3])):
+        truth[15] = 1
+
+
     print truth
     return truth
 
@@ -208,9 +227,10 @@ line1 = 'Before: [3, 2, 1, 1]'
 line2 = '9 2 1 2'
 line3 = 'After:  [3, 2, 2, 1]'
 lines = [line1, line2, line3]
-CheckWhatsTrue(lines)
+truth = CheckWhatsTrue(lines)
+nTruth = CountTruth(truth)
+print nTruth
 """
-
 
 """
 line1 = rawData[4]
@@ -223,9 +243,10 @@ print lines
 truth = CheckWhatsTrue(lines)
 print truth
 """
+
 counter = 0
 count = 0
-while counter < len(rawData)-3:
+while counter <= len(rawData):
     line1 = rawData[counter]
     #print line1
     line2 = rawData[counter+1]
@@ -240,4 +261,4 @@ while counter < len(rawData)-3:
         count += 1
     counter += 4
 
-print "THE ANSER IS: ", count
+print "THE ANWSER IS: ", count
