@@ -51,7 +51,7 @@ def SETI(a,b,c):
     out = stack.copy()
     out[c] = a
     return out
-    # ignore c
+    # ignore b
 
 # Greater thant tests
 def GTIR(a,b,c):
@@ -211,6 +211,7 @@ lines = [line1, line2, line3]
 CheckWhatsTrue(lines)
 """
 
+
 """
 line1 = rawData[4]
 line2 = rawData[4+1]
@@ -222,7 +223,6 @@ print lines
 truth = CheckWhatsTrue(lines)
 print truth
 """
-
 counter = 0
 count = 0
 while counter < len(rawData)-3:
@@ -235,8 +235,9 @@ while counter < len(rawData)-3:
     lines = [line1, line2, line3]
     #print lines
     truth = CheckWhatsTrue(lines)
-    print CountTruth(truth)
-    count += CountTruth(truth)
+    nTruth =  CountTruth(truth)
+    if  nTruth >= 3:
+        count += 1
     counter += 4
 
 print "THE ANSER IS: ", count
