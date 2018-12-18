@@ -252,16 +252,15 @@ def PrintMap(inMap):
 NewMap = Map.copy()
 t = 0 #time = 0 mins
 #while t < 10:
-lastGen = 0
 while t < 1000000000:
 #while t < 2:
     t += 1
     for ydx in range(len(Map)):
         for xdx in range(len(Map[0])):
             NewMap[(ydx, xdx)] = NextGen(ydx, xdx)
-    print "After ", t, "mins"
+    #print "After ", t, "mins"
     #PrintMap(NewMap)
-    print "\n"
+    #print "\n"
     Map = NewMap.copy()
     nTrees = 0
     nLumber = 0 
@@ -271,9 +270,15 @@ while t < 1000000000:
                 nTrees += 1
             elif Map[(ydx, xdx)] == '#':
                 nLumber += 1
-    resource = nTrees * nLumber
-    print "Delta", resource - lastGen
-    lastGen = resource
+    nTrees = 0
+    nLumber = 0 
+    for ydx in range(len(Map)):
+        for xdx in range(len(Map[0])):
+            if Map[(ydx, xdx)] == '|':
+                nTrees += 1
+            elif Map[(ydx, xdx)] == '#':
+                nLumber += 1
+    print "Minutes: ", t, "Resource", nTrees*nLumber
 
 """
 nTrees = 0
@@ -291,3 +296,40 @@ print "nTrees = ", nTrees
 print "nLumber = ", nLumber
 print "answer = ", answer 
 """
+
+
+# Periodic w/ period 28
+# 2700
+"""
+
+Minutes:	3000	Resource	176900
+Minutes:	3001	Resource	183084
+Minutes:	3002	Resource	189630
+Minutes:	3003	Resource	197938
+Minutes:	3004	Resource	205737
+Minutes:	3005	Resource	216216
+Minutes:	3006	Resource	215877
+Minutes:	3007	Resource	215096
+Minutes:	3008	Resource	215160
+Minutes:	3009	Resource	217728
+Minutes:	3010	Resource	217672
+Minutes:	3011	Resource	219726
+Minutes:	3012	Resource	214878
+Minutes:	3013	Resource	189088
+Minutes:	3014	Resource	191540
+Minutes:	3015	Resource	199593
+Minutes:	3016	Resource	199064
+Minutes:	3017	Resource	199283
+Minutes:	3018	Resource	186550
+Minutes:	3019	Resource	182252
+Minutes:	3020	Resource	176468
+Minutes:	3021	Resource	174028
+Minutes:	3022	Resource	170016
+Minutes:	3023	Resource	167445
+Minutes:	3024	Resource	161214
+Minutes:	3025	Resource	164666
+Minutes:	3026	Resource	165599
+Minutes:	3027	Resource	171970
+
+
+SO Take (nGeneration - 3000) % 28 and look it up on the list above
